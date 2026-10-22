@@ -84,15 +84,18 @@ usage of the library.
 
 2. Retrieve OPROM VBT (data) partition version
 
+   * options -H | --human-readable : print the version in dot-separated
+     decimal format (major.minor.hotfix.build)
+
 .. code-block:: sh
 
-    igsc oprom-data version [--device <device>]
+    igsc oprom-data version [-H] [--device <device>]
 
 3. Retrieve OPROM VBT (data) partition version from the supplied data image file,
 
 .. code-block:: sh
 
-    igsc oprom-data version --image <oprom file>
+    igsc oprom-data version [-H] --image <oprom file>
 
 
 4. Update OPROM code partition version, in case the device is
@@ -114,15 +117,18 @@ usage of the library.
 6. Retrieve OPROM code (GOP) partition version from the device, in case the device is
    not supplied the tool will use the first available device.
 
+   * options -H | --human-readable : print the version in dot-separated
+     decimal format (major.minor.hotfix.build)
+
 .. code-block:: sh
 
-    igsc oprom-code version [--device <device>]
+    igsc oprom-code version [-H] [--device <device>]
 
 7. Retrieve OPROM code partition version from the supplied data image file
 
 .. code-block:: sh
 
-    igsc oprom-code version --image <oprom file>
+    igsc oprom-code version [-H] --image <oprom file>
 
 
 3.4 Device enumeration

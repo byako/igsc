@@ -37,6 +37,7 @@ static inline void gsc_msleep(uint32_t msecs)
 
 static bool verbose = false;
 static bool quiet = false;
+static bool oprom_human_readable = false;
 static bool use_progress_bar = false;
 
 #define igsc_verbose(fmt, ...) do {          \
@@ -244,6 +245,41 @@ static void print_oprom_version(enum igsc_oprom_type type,
            oprom_version->version[5],
            oprom_version->version[6],
            oprom_version->version[7]);
+}
+
+/*
+ * OPROM version is stored as four little-endian 16-bit words:
+ * major, minor, hotfix, build
+ */
+static inline uint16_t oprom_version_word(const struct igsc_oprom_version *oprom_version,
+                                          unsigned int index)
+{
+    return (uint16_t)(oprom_version->version[2 * index] |
+                      (oprom_version->version[2 * index + 1] << 8));
+}
+
+static void print_oprom_version_human_readable(enum igsc_oprom_type type,
+                                               const struct igsc_oprom_version *oprom_version)
+{
+    printf("OPROM %s Version: %u.%u.%u.%u\n",
+           oprom_type_to_str(type),
+           oprom_version_word(oprom_version, 0),
+           oprom_version_word(oprom_version, 1),
+           oprom_version_word(oprom_version, 2),
+           oprom_version_word(oprom_version, 3));
+}
+
+static void print_oprom_version_select(enum igsc_oprom_type type,
+                                       const struct igsc_oprom_version *oprom_version)
+{
+    if (oprom_human_readable)
+    {
+        print_oprom_version_human_readable(type, oprom_version);
+    }
+    else
+    {
+        print_oprom_version(type, oprom_version);
+    }
 }
 
 static void print_oprom_device_info(const struct igsc_oprom_device_info *info)
@@ -589,6 +625,12 @@ static bool arg_is_quiet(const char *arg)
 {
     return arg_is_token(arg, "-q") ||
            arg_is_token(arg, "--quiet");
+}
+
+static bool arg_is_human_readable(const char *arg)
+{
+    return arg_is_token(arg, "-H") ||
+           arg_is_token(arg, "--human-readable");
 }
 
 static bool arg_is_image(const char *arg)
@@ -1790,7 +1832,7 @@ int oprom_device_version(const char *device_path,
         goto exit;
     }
 
-    print_oprom_version(igsc_oprom_type, &oprom_version);
+    print_oprom_version_select(igsc_oprom_type, &oprom_version);
 
 exit:
     (void)igsc_device_close(&handle);
@@ -1849,7 +1891,7 @@ int oprom_image_version(const char *image_path, enum igsc_oprom_type type)
     ret = igsc_image_oprom_version(oimg, type, &oprom_version);
     if (ret == IGSC_SUCCESS)
     {
-        print_oprom_version(type, &oprom_version);
+        print_oprom_version_select(type, &oprom_version);
     }
     else
     {
@@ -2199,6 +2241,12 @@ static int do_oprom_code_supported_devices(int argc, char *argv[])
 static int do_oprom_version(int argc, char *argv[], enum igsc_oprom_type type)
 {
     char *device_path_found = NULL;
+
+    while (argc > 0 && arg_is_human_readable(argv[0]))
+    {
+        oprom_human_readable = true;
+        arg_next(&argc, &argv);
+    }
 
     if (argc == 2)
     {
@@ -5601,7 +5649,7 @@ static const struct gsc_op g_ops[] = {
         .name  = "oprom-data",
         .op    = do_oprom_data,
         .usage = {"update [options] [--device <dev>] --image  <image>",
-                  "version [--device <dev>] | --image <file>",
+                  "version [-H] [--device <dev>] | --image <file>",
                   "supported-devices --image <file>",
                   NULL},
         .help  = "Update oprom data partition\n"
@@ -5613,13 +5661,15 @@ static const struct gsc_op g_ops[] = {
                  "    -d | --device <device>\n"
                  "            device to be updated\n"
                  "    -i | --image <image file>\n"
-                 "            supplied image\n",
+                 "            supplied image\n"
+                 "    -H | --human-readable\n"
+                 "            print version in dot-separated decimal format\n",
     },
     {
         .name  = "oprom-code",
         .op    = do_oprom_code,
         .usage = {"update [options] [--device <dev>] --image <image>",
-                  "version [--device <dev>] | --image <file>",
+                  "version [-H] [--device <dev>] | --image <file>",
                   "supported-devices --image <file>",
                   NULL},
         .help  = "Update oprom code partition\n"
@@ -5631,7 +5681,9 @@ static const struct gsc_op g_ops[] = {
                  "    -d | --device <device>\n"
                  "            device to be updated\n"
                  "    -i | --image <image file>\n"
-                 "            supplied image\n",
+                 "            supplied image\n"
+                 "    -H | --human-readable\n"
+                 "            print version in dot-separated decimal format\n",
     },
     {
         .name  = "fw-data",

@@ -839,6 +839,70 @@ static void test_oprom_data_version_3(void **state)
 }
 
 /**
+ * test: igsc oprom-data version -H --device /dev/mei0
+ */
+static void test_oprom_data_version_human_1(void **state)
+{
+    int ret;
+    char **argv = *state;
+    int argc = 1;
+
+    argv[argc++] = test_strdup("oprom-data");
+    argv[argc++] = test_strdup("version");
+    argv[argc++] = test_strdup("-H");
+    argv[argc++] = test_strdup("--device");
+    argv[argc++] = test_strdup("/dev/mei0");
+
+    ret = ut_main(argc, argv);
+
+    test_arg_free(argc, argv);
+
+    assert_true(ret == EXIT_SUCCESS);
+}
+
+/**
+ * test: igsc oprom-data version --human-readable --image oprom.img
+ */
+static void test_oprom_data_version_human_2(void **state)
+{
+    int ret;
+    char **argv = *state;
+    int argc = 1;
+
+    argv[argc++] = test_strdup("oprom-data");
+    argv[argc++] = test_strdup("version");
+    argv[argc++] = test_strdup("--human-readable");
+    argv[argc++] = test_strdup("--image");
+    argv[argc++] = test_strdup("oprom.img");
+
+    ret = ut_main(argc, argv);
+
+    test_arg_free(argc, argv);
+
+    assert_true(ret == EXIT_SUCCESS);
+}
+
+/**
+ * test: igsc oprom-data version -H
+ */
+static void test_oprom_data_version_human_3(void **state)
+{
+    int ret;
+    char **argv = *state;
+    int argc = 1;
+
+    argv[argc++] = test_strdup("oprom-data");
+    argv[argc++] = test_strdup("version");
+    argv[argc++] = test_strdup("-H");
+
+    ret = ut_main(argc, argv);
+
+    test_arg_free(argc, argv);
+
+    assert_true(ret == EXIT_SUCCESS);
+}
+
+/**
  * test: igsc oprom-data version --image
  */
 static void test_oprom_data_version_bad_1(void **state)
@@ -1215,6 +1279,70 @@ static void test_oprom_code_version_3(void **state)
 }
 
 /**
+ * test: igsc oprom-code version -H --device /dev/mei0
+ */
+static void test_oprom_code_version_human_1(void **state)
+{
+    int ret;
+    char **argv = *state;
+    int argc = 1;
+
+    argv[argc++] = test_strdup("oprom-code");
+    argv[argc++] = test_strdup("version");
+    argv[argc++] = test_strdup("-H");
+    argv[argc++] = test_strdup("--device");
+    argv[argc++] = test_strdup("/dev/mei0");
+
+    ret = ut_main(argc, argv);
+
+    test_arg_free(argc, argv);
+
+    assert_true(ret == EXIT_SUCCESS);
+}
+
+/**
+ * test: igsc oprom-code version --human-readable --image oprom.img
+ */
+static void test_oprom_code_version_human_2(void **state)
+{
+    int ret;
+    char **argv = *state;
+    int argc = 1;
+
+    argv[argc++] = test_strdup("oprom-code");
+    argv[argc++] = test_strdup("version");
+    argv[argc++] = test_strdup("--human-readable");
+    argv[argc++] = test_strdup("--image");
+    argv[argc++] = test_strdup("oprom.img");
+
+    ret = ut_main(argc, argv);
+
+    test_arg_free(argc, argv);
+
+    assert_true(ret == EXIT_SUCCESS);
+}
+
+/**
+ * test: igsc oprom-code version -H
+ */
+static void test_oprom_code_version_human_3(void **state)
+{
+    int ret;
+    char **argv = *state;
+    int argc = 1;
+
+    argv[argc++] = test_strdup("oprom-code");
+    argv[argc++] = test_strdup("version");
+    argv[argc++] = test_strdup("-H");
+
+    ret = ut_main(argc, argv);
+
+    test_arg_free(argc, argv);
+
+    assert_true(ret == EXIT_SUCCESS);
+}
+
+/**
  * test: igsc oprom-code version --image
  */
 static void test_oprom_code_version_bad_1(void **state)
@@ -1499,6 +1627,9 @@ int main(void)
         cmocka_unit_test(test_oprom_data_version_1),
         cmocka_unit_test(test_oprom_data_version_2),
         cmocka_unit_test(test_oprom_data_version_3),
+        cmocka_unit_test(test_oprom_data_version_human_1),
+        cmocka_unit_test(test_oprom_data_version_human_2),
+        cmocka_unit_test(test_oprom_data_version_human_3),
         cmocka_unit_test(test_oprom_data_version_bad_1),
         cmocka_unit_test(test_oprom_data_version_bad_2),
         cmocka_unit_test(test_oprom_data_version_bad_3),
@@ -1517,6 +1648,9 @@ int main(void)
         cmocka_unit_test(test_oprom_code_version_1),
         cmocka_unit_test(test_oprom_code_version_2),
         cmocka_unit_test(test_oprom_code_version_3),
+        cmocka_unit_test(test_oprom_code_version_human_1),
+        cmocka_unit_test(test_oprom_code_version_human_2),
+        cmocka_unit_test(test_oprom_code_version_human_3),
         cmocka_unit_test(test_oprom_code_version_bad_1),
         cmocka_unit_test(test_oprom_code_version_bad_2),
         cmocka_unit_test(test_oprom_code_version_bad_3),
